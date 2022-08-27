@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,24 +21,24 @@ public class TodoRoutes {
     }
 
     @PostMapping
-    public ResponseEntity<Todo> create(@RequestBody Todo t){
-        return new ResponseEntity<>(todoService.CreateTodo(t), HttpStatus.CREATED);
+    public ResponseEntity<Todo> create(@Valid @RequestBody Todo t){
+        return new ResponseEntity(todoService.CreateTodo(t), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<Todo>> getAll(){
-        return new ResponseEntity<>(todoService.getTodos(),HttpStatus.OK);
+        return ResponseEntity.ok(todoService.getTodos());
     }
 
     @PatchMapping("{id}")
     public ResponseEntity<Todo> Toggle(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(todoService.ToggleTodoStatus(id),HttpStatus.OK);
+        return ResponseEntity.ok(todoService.ToggleTodoStatus(id));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Message> Delete(@PathVariable("id") Long id){
         todoService.DeleteTodo(id);
-        return new ResponseEntity<>(new Message(String.format("Todo with id: %d has been deleted!",id)),HttpStatus.OK);
+        return ResponseEntity.ok(new Message(String.format("Todo with id: %d has been deleted!",id)));
     }
 
 }

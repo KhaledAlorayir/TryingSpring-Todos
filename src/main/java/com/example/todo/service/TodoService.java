@@ -5,17 +5,21 @@ import com.example.todo.model.Todo;
 import com.example.todo.repo.TodoRepo;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Validator;
 import java.util.List;
 
 @Service
 public class TodoService {
     private TodoRepo todoRepo;
+    private Validator validator;
 
-    public TodoService(TodoRepo todoRepo) {
+    public TodoService(TodoRepo todoRepo, Validator validator) {
         this.todoRepo = todoRepo;
+        this.validator = validator;
     }
 
     public Todo CreateTodo(Todo t){
+
         return todoRepo.save(t);
     }
 

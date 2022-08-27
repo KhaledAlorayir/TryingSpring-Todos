@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Entity
@@ -14,6 +15,7 @@ public class Todo {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
+    @NotBlank(message = "message is requierd!")
     private String message;
     private boolean completed = false;
     @CreationTimestamp

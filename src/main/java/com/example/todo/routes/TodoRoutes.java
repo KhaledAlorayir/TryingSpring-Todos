@@ -1,5 +1,6 @@
 package com.example.todo.routes;
 
+import com.example.todo.model.Message;
 import com.example.todo.model.Todo;
 import com.example.todo.service.TodoService;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,12 @@ public class TodoRoutes {
     @PatchMapping("{id}")
     public ResponseEntity<Todo> Toggle(@PathVariable("id") Long id) {
         return new ResponseEntity<>(todoService.ToggleTodoStatus(id),HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Message> Delete(@PathVariable("id") Long id){
+        todoService.DeleteTodo(id);
+        return new ResponseEntity<>(new Message(String.format("Todo with id: %d has been deleted!",id)),HttpStatus.OK);
     }
 
 }

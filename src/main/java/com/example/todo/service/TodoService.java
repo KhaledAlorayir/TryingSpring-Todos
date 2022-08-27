@@ -31,4 +31,10 @@ public class TodoService {
       return todo;
     }
 
+    public void DeleteTodo(long id){
+        Todo todo = todoRepo.findById(id).orElseThrow(() -> new NotFoundException(id));
+        todoRepo.deleteById(id);
+
+    }
+
 }

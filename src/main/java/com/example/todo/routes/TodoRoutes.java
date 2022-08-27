@@ -28,4 +28,9 @@ public class TodoRoutes {
         return new ResponseEntity<>(todoService.getTodos(),HttpStatus.OK);
     }
 
+    @PatchMapping("{id}")
+    public ResponseEntity<Todo> Toggle(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(todoService.ToggleTodoStatus(id),HttpStatus.OK);
+    }
+
 }

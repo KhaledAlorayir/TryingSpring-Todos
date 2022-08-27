@@ -1,5 +1,6 @@
 package com.example.todo.service;
 
+import com.example.todo.exception.NotFoundException;
 import com.example.todo.model.Todo;
 import com.example.todo.repo.TodoRepo;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,14 @@ public class TodoService {
 
     public List<Todo> getTodos(){
         return todoRepo.findAll();
+    }
+
+    public Todo ToggleTodoStatus(long id){
+
+      Todo todo = todoRepo.findById(id).orElseThrow(() -> new NotFoundException(id));
+      todo.setCompleted(!todo.isCompleted());
+      todoRepo.save(todo);
+      return todo;
     }
 
 }

@@ -1,8 +1,9 @@
 package com.example.todo.routes;
 
 import com.example.todo.model.Message;
-import com.example.todo.model.Todo;
+import com.example.todo.model.DB.Todo;
 import com.example.todo.service.TodoService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,13 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/todo")
+@AllArgsConstructor
 public class TodoRoutes {
 
     private TodoService todoService;
 
-    public TodoRoutes(TodoService todoService) {
-        this.todoService = todoService;
-    }
 
     @PostMapping
     public ResponseEntity<Todo> create(@Valid @RequestBody Todo t){

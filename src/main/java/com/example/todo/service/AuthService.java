@@ -49,7 +49,7 @@ public class AuthService {
             AppUser u =  userRepo.findByEmail(loginForm.getEmail()).get();
 
             Map<String,String> JWTpayload = new HashMap();
-            JWTpayload.put("email",loginForm.getEmail());
+            JWTpayload.put("email",u.getEmail());
             JWTpayload.put("uid",u.getId().toString());
 
             String token = JWT.create()

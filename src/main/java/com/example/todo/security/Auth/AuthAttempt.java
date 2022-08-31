@@ -1,4 +1,4 @@
-package com.example.todo.security;
+package com.example.todo.security.Auth;
 
 import com.example.todo.model.LoginForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +33,7 @@ public class AuthAttempt extends UsernamePasswordAuthenticationFilter {
             return this.getAuthenticationManager().authenticate(token);
 
         }catch(IOException e){
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

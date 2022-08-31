@@ -1,4 +1,4 @@
-package com.example.todo.security;
+package com.example.todo.security.Auth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -35,8 +35,13 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authResult) throws IOException {
         UserDetails ud = (UserDetails) authResult.getPrincipal();
+
+        Map<String,String> payload = new HashMap();
+        payload.put("email",ud.getUsername());
+        payload.put("uid",userService.getUserID(ud.getUsername()).toString());
+
         String token = JWT.create()
-                .withSubject(userService.getUserID(ud.getUsername()).toString())
+                .withPayload(payload)
                 .withExpiresAt(new Date(System.currentTimeMillis() + 8 * 60 * 60 * 1000))
                 .sign(Algorithm.HMAC256(SECRET));
 
@@ -45,4 +50,5 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         response.setContentType(APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getOutputStream(),tokenRes);
     }
+
 }

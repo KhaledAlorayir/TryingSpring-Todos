@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        AppUser u = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("No user found with this email"));
+        AppUser u = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("invalid credentials"));
         ArrayList<SimpleGrantedAuthority> ar = new ArrayList<>();
         ar.add(new SimpleGrantedAuthority("user"));
         return new User(u.getEmail(),u.getPassword(),ar);

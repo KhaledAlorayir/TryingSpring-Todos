@@ -1,9 +1,7 @@
-package com.example.todo.security;
+package com.example.todo.security.Auth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.example.todo.model.DB.AppUser;
-import com.example.todo.repo.UserRepo;
 import com.example.todo.service.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,20 +15,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
+
 public class AuthMiddleware extends BasicAuthenticationFilter {
 
     private final String prefix = "Bearer ";
-    private UserRepo userRepo;
     private UserService userService;
     private String SECRET;
 
 
 
 
-    public AuthMiddleware(AuthenticationManager authenticationManager, UserRepo userRepo, UserService userService,String SECRET){
+    public AuthMiddleware(AuthenticationManager authenticationManager, UserService userService,String SECRET){
         super(authenticationManager);
         this.userService = userService;
-        this.userRepo = userRepo;
         this.SECRET=SECRET;
     }
 
@@ -53,19 +51,22 @@ public class AuthMiddleware extends BasicAuthenticationFilter {
         if(token == null || !token.startsWith(prefix)){
             return null;
         }
-        String uid = JWT.require(Algorithm.HMAC256(SECRET))
+        Map payload = JWT.require(Algorithm.HMAC256(SECRET))
                 .build()
                 .verify(token.replace(prefix,""))
-                .getSubject();
-        if(uid == null){
+                .getClaims();
+        if(payload == null){
             return null;
         }
 
+        String email = payload.get("email").toString().substring(1, payload.get("email").toString().length() - 1);
+        String uid = payload.get("uid").toString().substring(1, payload.get("uid").toString().length() - 1);
 
-        AppUser u = userRepo.findById(Long.parseLong(uid)).get();
-        UserDetails ud = userService.loadUserByUsername(u.getEmail());
 
-        return new UsernamePasswordAuthenticationToken(ud.getUsername(),null,ud.getAuthorities());
+
+        UserDetails ud = userService.loadUserByUsername(email);
+
+        return new UsernamePasswordAuthenticationToken(uid,null,ud.getAuthorities());
     }
 
 }

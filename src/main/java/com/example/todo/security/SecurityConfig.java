@@ -1,11 +1,8 @@
 package com.example.todo.security;
 
-import com.example.todo.security.Auth.AuthAttempt;
-import com.example.todo.security.Auth.AuthFailHandler;
 import com.example.todo.security.Auth.AuthMiddleware;
-import com.example.todo.security.Auth.AuthSuccessHandler;
-import com.example.todo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.todo.security.Auth.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,22 +16,17 @@ import org.springframework.security.web.SecurityFilterChain;
 import javax.servlet.http.HttpServletResponse;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    private UserService userService;
-    private AuthSuccessHandler authSuccessHandler;
-    private AuthFailHandler authFailHandler;
+    private final AuthenticationManager authenticationManager;
+    private final UserDetailsImpl userDetails;
+
 
     @Value("${JWT_SECRET}")
     private String SECRET;
 
-    public SecurityConfig(AuthSuccessHandler authSuccessHandler, UserService userService, AuthFailHandler authFailHandler){
-        this.authSuccessHandler = authSuccessHandler;
-        this.userService = userService;
-        this.authFailHandler = authFailHandler;
-    }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -52,8 +44,7 @@ public class SecurityConfig {
                                 .and()
                                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                                 .and()
-                                .addFilter(authenticationFilter())
-                                .addFilter(new AuthMiddleware(authenticationManager,userService,SECRET))
+                                .addFilter(new AuthMiddleware(authenticationManager,userDetails,SECRET))
                                 .exceptionHandling()
                                 .authenticationEntryPoint( (request, response, authException) ->
                                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"));
@@ -64,17 +55,6 @@ public class SecurityConfig {
                 })
                 .httpBasic(Customizer.withDefaults());
         return http.build();
-    }
-
-    @Bean
-    AuthAttempt authenticationFilter() throws Exception {
-        AuthAttempt filter = new AuthAttempt();
-        filter.setAuthenticationSuccessHandler(authSuccessHandler);
-        filter.setAuthenticationManager(authenticationManager);
-        filter.setFilterProcessesUrl("/api/auth/signin");
-        filter.setAuthenticationFailureHandler(authFailHandler);
-
-        return filter;
     }
 
 

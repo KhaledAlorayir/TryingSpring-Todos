@@ -2,7 +2,6 @@ package com.example.todo.security.Auth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.example.todo.service.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,15 +19,15 @@ import java.util.Map;
 public class AuthMiddleware extends BasicAuthenticationFilter {
 
     private final String prefix = "Bearer ";
-    private UserService userService;
+    private UserDetailsImpl userDetails;
     private String SECRET;
 
 
 
 
-    public AuthMiddleware(AuthenticationManager authenticationManager, UserService userService,String SECRET){
+    public AuthMiddleware(AuthenticationManager authenticationManager, UserDetailsImpl userDetails,String SECRET){
         super(authenticationManager);
-        this.userService = userService;
+        this.userDetails = userDetails;
         this.SECRET=SECRET;
     }
 
@@ -64,7 +63,7 @@ public class AuthMiddleware extends BasicAuthenticationFilter {
 
 
 
-        UserDetails ud = userService.loadUserByUsername(email);
+        UserDetails ud = userDetails.loadUserByUsername(email);
 
         return new UsernamePasswordAuthenticationToken(uid,null,ud.getAuthorities());
     }

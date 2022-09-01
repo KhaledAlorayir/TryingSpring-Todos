@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class NotFoundException extends RuntimeException {
 
 
-    public NotFoundException(Long id){
+    public NotFoundException(String id){
         super(String.format("no Todo found with this ID: %d",id));
     }
 

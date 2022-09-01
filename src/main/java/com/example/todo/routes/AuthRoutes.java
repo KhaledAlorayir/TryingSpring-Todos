@@ -1,13 +1,15 @@
 package com.example.todo.routes;
 
-import com.example.todo.model.DB.AppUser;
-import com.example.todo.model.LoginForm;
-import com.example.todo.model.Message;
-import com.example.todo.model.Token;
+import com.example.todo.model.DTO.LoginForm;
+import com.example.todo.model.DTO.Message;
+import com.example.todo.model.DTO.Token;
 import com.example.todo.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -19,7 +21,7 @@ public class AuthRoutes {
     private AuthService userService;
 
     @PostMapping(path = "/signup")
-    public ResponseEntity<Message> Signup(@Valid @RequestBody AppUser user) {
+    public ResponseEntity<Message> Signup(@Valid @RequestBody LoginForm user) {
         userService.Signup(user);
         return ResponseEntity.ok(new Message("Welcome!"));
     }

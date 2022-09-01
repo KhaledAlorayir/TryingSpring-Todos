@@ -16,6 +16,10 @@ public class Todo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(nullable = false ,unique = true)
+    private String tid;
+
     @Column(nullable = false)
     @NotBlank(message = "message is requierd!")
     @Size(max = 100, message = "message is too long!")

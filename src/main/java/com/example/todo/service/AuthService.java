@@ -5,8 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.example.todo.exception.InvalidCredException;
 import com.example.todo.exception.UserExistsException;
 import com.example.todo.model.DB.AppUser;
-import com.example.todo.model.LoginForm;
-import com.example.todo.model.Token;
+import com.example.todo.model.DTO.LoginForm;
+import com.example.todo.model.DTO.Token;
 import com.example.todo.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,11 +33,16 @@ public class AuthService {
 
 
 
-    public void Signup(AppUser user) {
-        userRepo.findByEmail(user.getEmail()).ifPresent(u -> {
+    public void Signup(LoginForm loginForm) {
+        userRepo.findByEmail(loginForm.getEmail()).ifPresent(u -> {
             throw new UserExistsException(u.getEmail());
         });
-        user.setPassword(encoder.encode(user.getPassword()));
+
+        AppUser user = new AppUser();
+
+        user.setEmail(loginForm.getEmail());
+        user.setPassword(encoder.encode(loginForm.getPassword()));
+        user.setUid(String.format("U-%s", userRepo.count()+1));
         userRepo.save(user);
     }
 

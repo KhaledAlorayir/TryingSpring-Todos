@@ -4,12 +4,15 @@ import com.example.todo.exception.NotAuthorizedException;
 import com.example.todo.exception.NotFoundException;
 import com.example.todo.model.DB.AppUser;
 import com.example.todo.model.DB.Todo;
+import com.example.todo.model.DTO.TodoReqDTO;
+import com.example.todo.model.DTO.TodoResDTO;
 import com.example.todo.repo.TodoRepo;
 import com.example.todo.repo.UserRepo;
 import com.example.todo.utils.Helpers;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,20 +21,31 @@ public class TodoService {
     private TodoRepo todoRepo;
     private UserRepo userRepo;
 
+    // TODO: 9/1/2022 insert id insted of obj
 
-    public Todo CreateTodo(Todo t){
+    public TodoResDTO CreateTodo(TodoReqDTO t){
         AppUser user = userRepo.findById(Helpers.getAuthedID()).get();
-        t.setOwner(user);
-        return todoRepo.save(t);
+
+        Todo todo = new Todo();
+        todo.setMessage(t.getMessage());
+        todo.setOwner(user);
+        todo.setTid(String.format("T-%d-%d",user.getId(),user.getTodos().size()+1));
+        todoRepo.save(todo);
+
+        return new TodoResDTO(todo.getTid(),todo.getMessage(),todo.isCompleted(),todo.getCreatedAt(),todo.getOwner().getUid());
+
     }
 
-    public List<Todo> getTodos(){
+    public List<TodoResDTO> getTodos(){
         AppUser user = userRepo.findById(Helpers.getAuthedID()).get();
-        return user.getTodos();
+        List<TodoResDTO> todos = new ArrayList<>();
+        user.getTodos().forEach((todo -> todos.add(new TodoResDTO(todo.getTid(),todo.getMessage(),todo.isCompleted(),todo.getCreatedAt(),todo.getOwner().getUid()))));
+
+        return todos;
     }
 
-    public Todo ToggleTodoStatus(long id){
-        Todo todo = todoRepo.findById(id).orElseThrow(() -> new NotFoundException(id));
+    public TodoResDTO ToggleTodoStatus(String id){
+        Todo todo = todoRepo.findByTid(id).orElseThrow(() -> new NotFoundException(id));
 
         if(todo.getOwner().getId() != Helpers.getAuthedID()){
             throw new NotAuthorizedException();
@@ -39,16 +53,17 @@ public class TodoService {
 
         todo.setCompleted(!todo.isCompleted());
         todoRepo.save(todo);
-        return todo;
+
+        return new TodoResDTO(todo.getTid(),todo.getMessage(),todo.isCompleted(),todo.getCreatedAt(),todo.getOwner().getUid());
     }
 
-    public void DeleteTodo(long id){
-        Todo todo = todoRepo.findById(id).orElseThrow(() -> new NotFoundException(id));
+    public void DeleteTodo(String id){
+        Todo todo = todoRepo.findByTid(id).orElseThrow(() -> new NotFoundException(id));
 
         if(todo.getOwner().getId() != Helpers.getAuthedID()){
             throw new NotAuthorizedException();
         }
-        todoRepo.deleteById(id);
+        todoRepo.deleteById(todo.getId());
     }
 
 }

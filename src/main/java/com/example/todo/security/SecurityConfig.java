@@ -26,8 +26,6 @@ public class SecurityConfig {
     @Value("${JWT_SECRET}")
     private String SECRET;
 
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
@@ -38,7 +36,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> {
                     try{
                         auth
-                                .antMatchers(HttpMethod.GET,"/api/todo").permitAll()
                                 .antMatchers("/api/todo","/api/todo/**").hasAuthority("user")
                                 .anyRequest().permitAll()
                                 .and()

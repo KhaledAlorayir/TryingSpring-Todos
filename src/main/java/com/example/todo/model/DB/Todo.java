@@ -1,5 +1,6 @@
 package com.example.todo.model.DB;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -22,6 +23,11 @@ public class Todo {
     private boolean completed = false;
     @CreationTimestamp
     private Date createdAt;
+
+    @JsonBackReference
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "owner_id")
+    private AppUser owner;
 
     public void setMessage(String message) {
         this.message = message.trim();

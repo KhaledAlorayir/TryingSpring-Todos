@@ -21,7 +21,7 @@ public class AuthRoutes {
     @PostMapping(path = "/signup")
     public ResponseEntity<Message> Signup(@Valid @RequestBody AppUser user) {
         userService.Signup(user);
-        return ResponseEntity.ok(new Message("Hello"));
+        return ResponseEntity.ok(new Message("Welcome!"));
     }
 
     @PostMapping(path = "/signin")

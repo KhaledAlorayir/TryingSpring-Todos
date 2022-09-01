@@ -1,5 +1,6 @@
 package com.example.todo.model.DB;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
@@ -8,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -26,6 +28,10 @@ public class AppUser {
     private String password;
     @CreationTimestamp
     private Date createdAt;
+
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Todo> todos;
 
     public void setEmail(String email) {
         this.email = email.trim();

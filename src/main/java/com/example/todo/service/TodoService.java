@@ -21,10 +21,11 @@ public class TodoService {
     private TodoRepo todoRepo;
     private UserRepo userRepo;
 
-    // TODO: 9/1/2022 insert id insted of obj
 
     public TodoResDTO CreateTodo(TodoReqDTO t){
-        AppUser user = userRepo.findById(Helpers.getAuthedID()).get();
+        //get user ref, insted of a db query to add them as owner to the item
+        //although it would still query the db since we are requesting the user todos in setTid
+        AppUser user = userRepo.getReferenceById(Helpers.getAuthedID());
 
         Todo todo = new Todo();
         todo.setMessage(t.getMessage());
@@ -32,7 +33,7 @@ public class TodoService {
         todo.setTid(String.format("T-%d-%d",user.getId(),user.getTodos().size()+1));
         todoRepo.save(todo);
 
-        return new TodoResDTO(todo.getTid(),todo.getMessage(),todo.isCompleted(),todo.getCreatedAt(),todo.getOwner().getUid());
+        return new TodoResDTO(todo.getTid(),todo.getMessage(),todo.isCompleted(),todo.getCreatedAt(),"SS");
 
     }
 

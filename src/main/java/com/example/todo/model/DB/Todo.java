@@ -33,6 +33,7 @@ public class Todo {
     @JoinColumn(name = "owner_id")
     private AppUser owner;
 
+
     public void setMessage(String message) {
         this.message = message.trim();
     }
